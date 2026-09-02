@@ -2,3 +2,7 @@ key.json
 *.tfvars
 *.tfstate*
 .terraform/
+key.json
+*.tfvars
+*.tfstate*
+.terraform/
