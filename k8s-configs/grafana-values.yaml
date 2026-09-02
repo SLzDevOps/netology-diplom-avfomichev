@@ -1,0 +1,8 @@
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: netology
+  service:
+    portName: http-web
+    type: NodePort
+    nodePort: 30070

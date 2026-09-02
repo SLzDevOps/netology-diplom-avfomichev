@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avfomichev-test-app
+  namespace: test-application
+  labels:
+    app: avfomichev-web-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: avfomichev-web-app
+  template:
+    metadata:
+      labels:
+        app: avfomichev-web-app
+    spec:
+      containers:
+      - name: avfomichev-test-app
+        image: avfomichev/nginx:v1
+        resources:
+          requests:
+            cpu: "1"
+            memory: "200Mi"
+          limits:
+            cpu: "2"
+            memory: "400Mi"
+        ports:
+        - containerPort: 80

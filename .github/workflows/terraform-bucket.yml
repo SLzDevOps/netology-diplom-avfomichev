@@ -1,0 +1,50 @@
+name: 'Terraform Bucket'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/service-account-S3/**'
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Set to "true" to apply bucket changes'
+        required: false
+        default: 'false'
+
+jobs:
+  terraform:
+    name: 'Terraform Bucket'
+    runs-on: ubuntu-latest
+
+    env:
+      TOKEN: ${{ secrets.YC_TOKEN }}
+      CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+      FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.12.2"
+
+    - name: Terraform Init
+      run: terraform -chdir=./terraform/service-account-S3 init
+
+    - name: Terraform Validate
+      run: terraform -chdir=./terraform/service-account-S3 validate
+
+    - name: Terraform Plan
+      run: |
+        terraform -chdir=./terraform/service-account-S3 plan -input=false -out=tfplan \
+        -var="token=${{ secrets.YC_TOKEN }}" \
+        -var="cloud_id=${{ secrets.YC_CLOUD_ID }}" \
+        -var="folder_id=${{ secrets.YC_FOLDER_ID }}"
+
+    - name: Terraform Apply
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.apply == 'true'
+      run: terraform -chdir=./terraform/service-account-S3 apply -input=false tfplan
