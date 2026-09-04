@@ -1,8 +1,3 @@
-variable "token" {
-  type        = string
-  description = "OAuth-token для Yandex Cloud"
-}
-
 variable "cloud_id" {
   type        = string
   description = "ID облака"
@@ -22,4 +17,9 @@ variable "bucket_name" {
   description = "Имя бакета для хранения состояния"
   type        = string
   default     = "avfomichev-tfstate"
+}
+
+variable "service_account_key_file" {
+  description = "Path to service account key file"
+  type        = string
 }

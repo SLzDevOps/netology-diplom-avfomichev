@@ -1,24 +1,8 @@
-terraform {
-  required_providers {
-    yandex = {
-      source  = "yandex-cloud/yandex"
-      version = "~> 0.178.0"
-    }
-  }
-}
-
-provider "yandex" {
-  token     = var.token
-  cloud_id  = var.cloud_id
-  folder_id = var.folder_id
-  zone      = var.default_zone
-}
-
 # Сервисный аккаунт
 resource "yandex_iam_service_account" "tf-sa" {
   name        = "avfomichev-tf-sa"
   folder_id   = var.folder_id
-  description = "Service Account for Terraform (avfomichev)"
+  description = "Service Account for Terraform avfomichev"
 }
 
 # Назначение роли editor
@@ -34,14 +18,13 @@ resource "yandex_iam_service_account_static_access_key" "tf-sa-key" {
   description        = "Static access key for avfomichev-tf-sa"
 }
 
-# S3 бакет для хранения состояния
+# S3 бакет
 resource "yandex_storage_bucket" "tfstate" {
   bucket     = var.bucket_name
   access_key = yandex_iam_service_account_static_access_key.tf-sa-key.access_key
   secret_key = yandex_iam_service_account_static_access_key.tf-sa-key.secret_key
   force_destroy = true
 
-  # Сохраняем ключи в файл для дальнейшего использования
   provisioner "local-exec" {
     command = "echo 'export ACCESS_KEY=\"${yandex_iam_service_account_static_access_key.tf-sa-key.access_key}\"' > ../backend/backend.tfvars"
   }
@@ -49,12 +32,4 @@ resource "yandex_storage_bucket" "tfstate" {
   provisioner "local-exec" {
     command = "echo 'export SECRET_KEY=\"${yandex_iam_service_account_static_access_key.tf-sa-key.secret_key}\"' >> ../backend/backend.tfvars"
   }
-}
-
-output "service_account_id" {
-  value = yandex_iam_service_account.tf-sa.id
-}
-
-output "bucket_name" {
-  value = yandex_storage_bucket.tfstate.bucket
 }

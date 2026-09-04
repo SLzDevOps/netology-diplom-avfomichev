@@ -20,10 +20,6 @@ resource "yandex_vpc_subnet" "avfomichev-subnet-b" {
 }
 
 # Cloud-init конфигурация
-data "template_file" "cloudinit" {
-  template = file("${path.module}/cloud-config.yml")
-  vars = {
-    ssh_public_key  = var.ssh_public_key
-    ssh_private_key = var.ssh_private_key
-  }
+data "local_file" "cloudinit" {
+  filename = "${path.module}/cloud-config.yml"
 }

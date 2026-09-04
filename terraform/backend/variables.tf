@@ -1,9 +1,4 @@
 # Облачные переменные
-variable "token" {
-  type        = string
-  description = "OAuth-token для Yandex Cloud"
-}
-
 variable "cloud_id" {
   type        = string
   description = "ID облака"
@@ -12,6 +7,11 @@ variable "cloud_id" {
 variable "folder_id" {
   type        = string
   description = "ID папки"
+}
+
+variable "service_account_key_file" {
+  description = "Path to service account key file"
+  type        = string
 }
 
 # Зоны доступности
@@ -80,9 +80,9 @@ variable "master_config" {
   })
   default = {
     count       = 1
-    cores       = 2
-    memory      = 4
-    disk_size   = 10
+    cores       = 4
+    memory      = 8
+    disk_size   = 20
     platform_id = "standard-v3"
     os_family   = "ubuntu-2404-lts"
   }
@@ -101,9 +101,9 @@ variable "worker_config" {
   })
   default = {
     count       = 2
-    cores       = 2
-    memory      = 2
-    disk_size   = 10
+    cores       = 4
+    memory      = 4
+    disk_size   = 20
     platform_id = "standard-v3"
     os_family   = "ubuntu-2404-lts"
   }

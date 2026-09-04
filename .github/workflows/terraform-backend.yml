@@ -20,6 +20,7 @@ jobs:
 
     env:
       TOKEN: ${{ secrets.YC_TOKEN }}
+      YC_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}
       CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
       FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
       SSH_PUBLIC: ${{ secrets.SSH_PUBLIC }}

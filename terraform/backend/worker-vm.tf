@@ -13,6 +13,7 @@ resource "yandex_compute_instance" "avfomichev-kube-worker" {
   resources {
     cores  = var.worker_config.cores
     memory = var.worker_config.memory
+    core_fraction = 20
   }
 
   boot_disk {
@@ -25,11 +26,14 @@ resource "yandex_compute_instance" "avfomichev-kube-worker" {
   metadata = {
     serial-port-enable = 1
     ssh-keys           = "user:${var.ssh_public_key}"
-    user-data          = data.template_file.cloudinit.rendered
+    user-data = templatefile("${path.module}/cloud-config.yml", {
+    ssh_public_key  = var.ssh_public_key
+    ssh_private_key = var.ssh_private_key
+})
   }
 
   scheduling_policy {
-    preemptible = false
+    preemptible = true
   }
 
   network_interface {

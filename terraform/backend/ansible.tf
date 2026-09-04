@@ -3,7 +3,7 @@ resource "local_file" "hosts_cfg_kubespray" {
     workers = yandex_compute_instance.avfomichev-kube-worker
     masters = yandex_compute_instance.avfomichev-kube-master
   })
-  filename = "../../../kubespray/inventory/mycluster/hosts.yaml"
+  filename = "/home/avfomichev/kubespray/inventory/mycluster/hosts.yaml"
 
   depends_on = [
     yandex_compute_instance.avfomichev-kube-master,
