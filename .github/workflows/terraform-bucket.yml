@@ -21,7 +21,6 @@ jobs:
     env:
       CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
       FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
-      YC_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}
 
     steps:
     - name: Checkout
@@ -31,6 +30,11 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: "1.12.2"
+
+    - name: Create key file
+      run: |
+        echo '${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}' > key.json
+        cat key.json
 
     - name: Terraform Init
       run: terraform -chdir=terraform/service-account-S3 init
@@ -43,7 +47,7 @@ jobs:
         terraform -chdir=terraform/service-account-S3 plan -input=false -out=tfplan \
         -var="cloud_id=$CLOUD_ID" \
         -var="folder_id=$FOLDER_ID" \
-        -var="service_account_key_file=$YC_SERVICE_ACCOUNT_KEY_FILE"
+        -var="service_account_key_file=key.json"
 
     - name: Terraform Apply (Manual Trigger)
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.apply == 'true'
