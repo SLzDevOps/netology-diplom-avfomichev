@@ -34,7 +34,18 @@ jobs:
     - name: Create key file
       run: |
         echo '${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}' > key.json
+        echo "=== Проверка содержимого ==="
         cat key.json
+        echo "=== Проверка валидности JSON ==="
+        if ! cat key.json | jq . > /dev/null 2>&1; then
+          echo "❌ Ошибка: key.json невалидный JSON!"
+          echo "Первые 200 символов:"
+          cat key.json | head -c 200
+          exit 1
+        fi
+        echo "✅ key.json валидный JSON"
+        # Копируем в нужную директорию
+        cp key.json terraform/service-account-S3/
 
     - name: Terraform Init
       run: terraform -chdir=terraform/service-account-S3 init
