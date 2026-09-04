@@ -26,7 +26,6 @@ jobs:
     env:
       CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
       FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
-      YC_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}
       SSH_PUBLIC: ${{ secrets.SSH_PUBLIC }}
       SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}
       ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
@@ -40,6 +39,11 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: "1.12.2"
+
+    - name: Create key file
+      run: |
+        echo '${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}' > key.json
+        cat key.json
 
     - name: Terraform Init
       run: |
@@ -55,7 +59,7 @@ jobs:
         terraform -chdir=terraform/backend plan -input=false -out=tfplan \
         -var="cloud_id=$CLOUD_ID" \
         -var="folder_id=$FOLDER_ID" \
-        -var="service_account_key_file=$YC_SERVICE_ACCOUNT_KEY_FILE" \
+        -var="service_account_key_file=key.json" \
         -var="ssh_public_key=$SSH_PUBLIC" \
         -var="ssh_private_key=$SSH_PRIVATE"
 
