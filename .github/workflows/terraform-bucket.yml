@@ -1,7 +1,7 @@
-name: 'Terraform Bucket'
+name: 'Terraform bucket'
 
 on:
-  push:
+  pull_request:
     branches:
       - main
     paths:
@@ -15,13 +15,13 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform Bucket'
+    name: 'Terraform'
     runs-on: ubuntu-latest
 
     env:
-      TOKEN: ${{ secrets.YC_TOKEN }}
       CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
       FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+      YC_SERVICE_ACCOUNT_KEY_FILE: ${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}
 
     steps:
     - name: Checkout
@@ -41,10 +41,10 @@ jobs:
     - name: Terraform Plan
       run: |
         terraform -chdir=./terraform/service-account-S3 plan -input=false -out=tfplan \
-        -var="token=${{ secrets.YC_TOKEN }}" \
         -var="cloud_id=${{ secrets.YC_CLOUD_ID }}" \
-        -var="folder_id=${{ secrets.YC_FOLDER_ID }}"
+        -var="folder_id=${{ secrets.YC_FOLDER_ID }}" \
+        -var="service_account_key_file=${{ secrets.YC_SERVICE_ACCOUNT_KEY_FILE }}"
 
-    - name: Terraform Apply
+    - name: Terraform Apply (Manual Trigger)
       if: github.event_name == 'workflow_dispatch' && github.event.inputs.apply == 'true'
       run: terraform -chdir=./terraform/service-account-S3 apply -input=false tfplan
